@@ -1,0 +1,87 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name     String @db.VarChar(255)
+  email    String @unique @db.VarChar(255)
+  password String @db.VarChar(255)
+
+  score  Int @default(0)
+  wins   Int @default(0)
+  losses Int @default(0)
+  draws  Int @default(0)
+
+  status UserStatus @default(ONLINE)
+
+  friendInvitesSent FriendInvite[] @relation("FriendInvitesSent")
+  friendInvitesGot  FriendInvite[] @relation("FriendInvitesGot")
+
+  friends  User[] @relation("UserFriends") // where: { id: userId } (who connect)
+  friendOf User[] @relation("UserFriends") // connect: { id: anotherId } (who was connected)
+
+  matchesP1 Match[] @relation("P1")
+  matchesP2 Match[] @relation("P2")
+
+  @@index([name])
+  @@index([score])
+  @@map("user")
+}
+
+enum UserStatus {
+  OFFLINE
+  ONLINE
+  IS_PLAYING
+}
+
+model FriendInvite {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  status FriendStatus @default(PENDING)
+
+  senderId   String @map("sender_id") @db.Uuid
+  receiverId String @map("receiver_id") @db.Uuid
+
+  senderUser   User @relation("FriendInvitesSent", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverUser User @relation("FriendInvitesGot", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@map("friend_invite")
+}
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DENIED
+}
+
+model Match {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  player1Id String @map("player1_id") @db.Uuid
+  player2Id String @map("player2_id") @db.Uuid
+
+  player1 User @relation("P1", fields: [player1Id], references: [id], onDelete: Cascade)
+  player2 User @relation("P2", fields: [player2Id], references: [id], onDelete: Cascade)
+
+  winnerId String? @map("winner_id") @db.Uuid
+
+  @@index([createdAt])
+  @@index([player1Id])
+  @@index([player2Id])
+  @@map("match")
+}
