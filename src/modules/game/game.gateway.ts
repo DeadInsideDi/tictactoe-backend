@@ -241,7 +241,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	private extractUserIdFromSocket(client: Socket) {
-		const token = client.handshake.auth['token'] as string | undefined
+		const token = (client.handshake.auth['token'] ||
+			client.handshake.headers.authorization) as string | undefined
 		if (!token) return null
 		try {
 			const payload = this.authService.verifyToken<JwtPayload>(token)
