@@ -37,12 +37,10 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config)
 	SwaggerModule.setup('api/docs', app, document)
 
-	const logStart = async () => {
+	await app.listen(PORT, async () => {
 		const url = await app.getUrl()
 		console.log(`NEST SERVER STARTED AT PORT: ${PORT}, AT HOST: ${url}`)
-	}
-
-	await app.listen(PORT, void logStart)
+	})
 }
 
 void bootstrap()
