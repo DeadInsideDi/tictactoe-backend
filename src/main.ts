@@ -18,10 +18,10 @@ async function bootstrap() {
 			transform: true,
 		}),
 	)
-
+	// process.env.FRONTEND_URL
 	app.use(cookieParser())
 	app.enableCors({
-		origin: process.env.FRONTEND_URL,
+		origin: '*',
 		credentials: true,
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
 		exposedHeaders: ['Set-Cookie'],
