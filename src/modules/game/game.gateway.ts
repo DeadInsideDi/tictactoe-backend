@@ -16,9 +16,9 @@ import { ClientToServerEvents, ServerToClientEvents } from './events'
 import type { GameMatch } from './game-match'
 import { GameService } from './game.service'
 import type { AuthenticatedSocket, ErrorMessage } from './types/game'
-// process.env.FRONTEND_URL
+
 @WebSocketGateway({
-	cors: { origin: '*', credentials: true },
+	cors: { origin: process.env.FRONTEND_URL, credentials: true },
 	pingTimeout: 60000,
 	pingInterval: 30000,
 	maxHttpBufferSize: 1024 * 8,
