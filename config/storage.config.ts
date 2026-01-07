@@ -3,7 +3,7 @@ import { CookieOptions } from 'express'
 export const COOKEI = {
 	COOKIE_OPTIONS: {
 		httpOnly: true,
-		domain: process.env.DOMAIN,
+		// domain: process.env.DOMAIN,
 		secure: true,
 		sameSite: 'none',
 	} as CookieOptions,
